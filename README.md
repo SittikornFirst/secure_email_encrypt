@@ -17,7 +17,7 @@ A simple full-stack web application that simulates an **email system with confid
 
 ## Technologies Used
 
-| Area          | Stack                         |
+| System          | Code                         |
 |---------------|-------------------------------|
 | **Frontend**  | React + Vite + Tailwind CSS   |
 | **Backend**   | Node.js + Express             |
