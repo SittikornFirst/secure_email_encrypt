@@ -27,7 +27,7 @@ A simple full-stack web application that simulates an **email system with confid
 ---
 
 ## How to run
-### 1️⃣ Backend Setup
+### 1. Backend Setup
 
 ```bash
 cd backend
@@ -35,7 +35,7 @@ npm install
 node index.js
 ```
 
-### 2️⃣ Frontend Setup
+### 2. Frontend Setup
 
 ```bash
 cd secure-email
