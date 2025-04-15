@@ -4,7 +4,7 @@ export default function AdminView() {
   const [messages, setMessages] = useState([])
 
   useEffect(() => {
-    fetch('http://localhost:5000/admin/messages?email=admin@secure.com')
+    fetch('http://localhost:5000/admin/logs?email=admin@secure.com')
       .then(res => res.json())
       .then(data => setMessages(data))
   }, [])

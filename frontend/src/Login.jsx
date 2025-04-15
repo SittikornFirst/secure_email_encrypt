@@ -18,7 +18,7 @@ export default function Login() {
       localStorage.setItem('email', email)
       if (email == "admin@secure.com") {
         // ถ้าเป็น admin ให้ไปหน้า admin
-        navigate('/admin/messages');
+        navigate('/admin/logs');
         alert("Login success as admin");
         return;
       }
