@@ -26,9 +26,11 @@ app.post('/login', (req, res) => {
 
 // Send
 app.post("/send", (req, res) => {
-  const { receiver, message, key } = req.body;
+  const { sender, receiver, message, key } = req.body;
+  if (!users[sender]) return res.status(401).send("Sender not found");
+  if (!users[receiver]) return res.status(401).send("Receiver not found");
   const encrypted = encrypt(message, key);
-  messages.push({ sender: "demo@secure.com", receiver, message: encrypted });
+  messages.push({ sender, receiver, message: encrypted });
   res.send("Message sent");
 });
 
@@ -52,7 +54,7 @@ app.get("/users", (req, res) => {
 //   res.json(users);
 //   console.log(users);
 });
-app.get("/admin/messages", (req, res) => {
+app.get("/admin/logs", (req, res) => {
   // ไม่มี auth จริง ใช้ email = admin เท่านั้น
   const admin = req.query.email;
   if (admin !== "admin@secure.com")

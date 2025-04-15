@@ -14,12 +14,18 @@ export default function Login() {
     });
 
     if (res.ok) {
-        // เก็บ email ลง localStorage
-        localStorage.setItem('email', email)
-        navigate('/compose')
-        alert("Login success");
+      // เก็บ email ลง localStorage
+      localStorage.setItem('email', email)
+      if (email == "admin@secure.com") {
+        // ถ้าเป็น admin ให้ไปหน้า admin
+        navigate('/admin/messages');
+        alert("Login success as admin");
+        return;
       }
-       else {
+      navigate('/compose');
+      alert("Login success");
+    }
+    else {
       alert("Login failed");
     }
   };

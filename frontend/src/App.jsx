@@ -43,7 +43,7 @@ export default function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/compose" element={<Compose />} />
-        <Route path="/admin" element={<AdminView />} />
+        <Route path="/admin/logs" element={<AdminView />} />
       </Routes>
     </Router>
   );

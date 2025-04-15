@@ -8,8 +8,20 @@ export default function Compose() {
   const [key, setKey] = useState("");
 
   const [emails, setEmails] = useState([]);
-  const [decrypted, setDecrypted] = useState("");
+  // const [decrypted, setDecrypted] = useState("");
   const [showInbox, setShowInbox] = useState(false);
+  const [decryptedMessages, setDecryptedMessages] = useState({});
+
+  const handleDecrypt = async (ciphertext) => {
+    const res = await fetch("http://localhost:5000/decrypt", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ciphertext, key }),
+    });
+    const data = await res.text();
+    setDecryptedMessages((prev) => ({ ...prev, [ciphertext]: data }));
+  };
+
   useEffect(() => {
     fetch(`http://localhost:5000/users?email=${sender}`)
       .then((res) => res.json())
@@ -32,6 +44,7 @@ export default function Compose() {
     else alert("❌ Failed to send");
   };
 
+
   const loadInbox = () => {
     if (!showInbox) {
       const email = localStorage.getItem("email") || "";
@@ -46,15 +59,7 @@ export default function Compose() {
     }
   };
 
-  const handleDecrypt = async (ciphertext) => {
-    const res = await fetch("http://localhost:5000/decrypt", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ciphertext, key }),
-    });
-    const data = await res.text();
-    setDecrypted(data);
-  };
+
 
   return (
     <div className="min-h-screen p-6 ">
@@ -121,11 +126,10 @@ export default function Compose() {
             </button>
             <button
               onClick={loadInbox}
-              className={`${
-                showInbox
-                  ? "bg-gray-500 hover:bg-gray-600"
-                  : "bg-green-600 hover:bg-green-700"
-              } text-white px-6 py-2 rounded-lg`}
+              className={`${showInbox
+                ? "bg-gray-500 hover:bg-gray-600"
+                : "bg-green-600 hover:bg-green-700"
+                } text-white px-6 py-2 rounded-lg`}
             >
               {showInbox ? "Hide Messages" : "View Messages"}
             </button>
@@ -135,21 +139,18 @@ export default function Compose() {
           {showInbox && (
             <div className="mt-8 border-t pt-4">
               <h3 className="text-xl font-semibold mb-4">📥 Inbox</h3>
-              
+
               {emails.length > 0 ? (
-                
+
                 <div className="space-y-4">
                   <input
-                placeholder="Enter decryption key"
-                value={key}
-                onChange={(e) => setKey(e.target.value)}
-                className="mb-4 px-4 py-2 border border-gray-300 rounded-lg w-full"
-              />
+                    placeholder="Enter decryption key"
+                    value={key}
+                    onChange={(e) => setKey(e.target.value)}
+                    className="mb-4 px-4 py-2 border border-gray-300 rounded-lg w-full"
+                  />
                   {emails.map((email, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-gray-100 p-4 rounded-lg border"
-                    >
+                    <div key={idx} className="bg-gray-100 p-4 rounded-lg border">
                       <p className="text-sm text-gray-700">
                         <strong>From:</strong> {email.sender}
                       </p>
@@ -162,16 +163,15 @@ export default function Compose() {
                       >
                         Decrypt
                       </button>
+
+                      {decryptedMessages[email.message] && (
+                        <div className="mt-2 p-2 bg-green-50 border border-green-300 rounded">
+                          <strong className="text-green-800">Decrypted:</strong>
+                          <p className="text-gray-800">{decryptedMessages[email.message]}</p>
+                        </div>
+                      )}
                     </div>
                   ))}
-                  {decrypted && (
-                    <div className="mt-6 p-4 bg-green-50 border border-green-300 rounded-lg">
-                      <p className="text-green-800 font-semibold">
-                        Decrypted Message:
-                      </p>
-                      <p className="text-gray-800">{decrypted}</p>
-                    </div>
-                  )}
                 </div>
               ) : (
                 <div className="text-gray-500 text-center italic">
