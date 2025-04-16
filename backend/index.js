@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const { encrypt, decrypt } = require("./encryptor");
+const { encrypt, decrypt, hashPassword, verifyPassword } = require("./encryptor");
 const { users, messages } = require("./messages");
 
 const app = express();
@@ -9,26 +9,42 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Register
-app.post('/register', (req, res) => {
-    const { email, password } = req.body
-    if (users[email]) return res.status(400).send('User already exists')
-    users[email] = password
-    res.send('Registered successfully')
-  })
+app.post('/register', async (req, res) => {
+  const { email, password } = req.body;
+  if (users[email]) return res.status(400).send('User already exists');
+
+  try {
+    const hashed = await hashPassword(password);
+    users[email] = { password: hashed, role: "user" }; // Default to user
+    res.send('Registered successfully');
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
 
 // Login
-app.post('/login', (req, res) => {
-    const { email, password } = req.body
-    if (!users[email]) return res.status(401).send('User not found')
-    if (users[email] !== password) return res.status(401).send('Invalid credentials')
-    res.send('Login success')
-  })
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  const user = users[email];
 
-// Send
+  if (!user) return res.status(401).send('User not found');
+
+  try {
+    const valid = await verifyPassword(password, user.password);
+    if (!valid) return res.status(401).send('Invalid credentials');
+
+    res.json({ message: 'Login success', role: user.role });
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
+
+// Send message
 app.post("/send", (req, res) => {
   const { sender, receiver, message, key } = req.body;
   if (!users[sender]) return res.status(401).send("Sender not found");
   if (!users[receiver]) return res.status(401).send("Receiver not found");
+
   const encrypted = encrypt(message, key);
   messages.push({ sender, receiver, message: encrypted });
   res.send("Message sent");
@@ -47,19 +63,37 @@ app.post("/decrypt", (req, res) => {
   const plain = decrypt(ciphertext, key);
   res.send(plain);
 });
+
+// List other users (for receiver selection)
 app.get("/users", (req, res) => {
-    const me = req.query.email;
-    const others = Object.keys(users).filter((email) => email !== me);
-    res.json(others);
-//   res.json(users);
-//   console.log(users);
+  const me = req.query.email;
+  const others = Object.keys(users).filter((email) => email !== me);
+  res.json(others);
 });
+
+// Admin logs
 app.get("/admin/logs", (req, res) => {
-  // ไม่มี auth จริง ใช้ email = admin เท่านั้น
-  const admin = req.query.email;
-  if (admin !== "admin@secure.com")
+  const { email } = req.query;
+  if (!users[email] || users[email].role !== "admin") {
     return res.status(403).send("Not authorized");
-  res.json(messages); // [{sender, receiver, message}]
+  }
+  res.json(messages);
+});
+
+// Admin user list
+app.get('/admin/users', (req, res) => {
+  const { email } = req.query;
+  if (!users[email] || users[email].role !== "admin") {
+    return res.status(403).send("Not authorized");
+  }
+
+  const userList = Object.entries(users).map(([email, data]) => ({
+    email,
+    password: data.password,
+    role: data.role
+  }));
+
+  res.json(userList);
 });
 
 app.listen(5000, () => {

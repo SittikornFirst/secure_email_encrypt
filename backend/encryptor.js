@@ -1,4 +1,5 @@
 const crypto = require('crypto')
+const bcrypt = require("bcrypt");
 
 const encrypt = (text, key) => {
   const iv = crypto.randomBytes(16)
@@ -20,4 +21,13 @@ const decrypt = (cipherText, key) => {
   }
 }
 
-module.exports = { encrypt, decrypt }
+const hashPassword = async (plainPassword) => {
+  const saltRounds = 10;
+  return await bcrypt.hash(plainPassword, saltRounds);
+};
+
+const verifyPassword = async (plainPassword, hash) => {
+  return await bcrypt.compare(plainPassword, hash);
+};
+
+module.exports = { encrypt, decrypt, hashPassword, verifyPassword };

@@ -1,10 +1,10 @@
 import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     const res = await fetch("http://localhost:5000/login", {
@@ -14,21 +14,21 @@ export default function Login() {
     });
 
     if (res.ok) {
-      // เก็บ email ลง localStorage
-      localStorage.setItem('email', email)
-      if (email == "admin@secure.com") {
-        // ถ้าเป็น admin ให้ไปหน้า admin
-        // navigate('/admin/logs');
-        window.location.href = "/admin/logs";
+      const data = await res.json(); 
+      localStorage.setItem("email", email);
+      localStorage.setItem("role", data.role);
+      window.dispatchEvent(new Event("storage")); 
+
+      if (data.role === "admin") {
         alert("Login success as admin");
-        return;
+        navigate("/admin");
+      } else {
+        alert("Login success");
+        navigate("/compose");
       }
-      // navigate('/compose');
-      window.location.href = "/compose";
-      alert("Login success");
-    }
-    else {
-      alert("Login failed");
+    } else {
+      const err = await res.text();
+      alert("Login failed: " + err);
     }
   };
 

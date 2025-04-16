@@ -1,10 +1,20 @@
-const users = {
-  "demo@secure.com": "1234",
-  "admin@secure.com": "admin123",
-  "alice@mail.com": "1234",
-  "bob@mail.com": "1234",
+const bcrypt = require("bcrypt");
+
+const plainUsers = {
+  "admin@secure.com": { password: "admin123", role: "admin" },
+  "demo@gmail.com": { password: "1234", role: "user" },
+  "alice@gmail.com": { password: "1234", role: "user" },
+  "bob@gmail.com": { password: "1234", role: "user" },
 };
 
-const messages = []; // { sender, receiver, message }
+const users = {};
+const messages = [];
+
+// Hash passwords and store role
+for (const [email, { password, role }] of Object.entries(plainUsers)) {
+  const salt = bcrypt.genSaltSync(10);
+  const hashed = bcrypt.hashSync(password, salt);
+  users[email] = { password: hashed, role };
+}
 
 module.exports = { users, messages };
