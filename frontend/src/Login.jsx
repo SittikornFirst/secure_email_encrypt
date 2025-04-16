@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleLogin = async () => {
     const res = await fetch("http://localhost:5000/login", {
@@ -18,11 +18,13 @@ export default function Login() {
       localStorage.setItem('email', email)
       if (email == "admin@secure.com") {
         // ถ้าเป็น admin ให้ไปหน้า admin
-        navigate('/admin/logs');
+        // navigate('/admin/logs');
+        window.location.href = "/admin/logs";
         alert("Login success as admin");
         return;
       }
-      navigate('/compose');
+      // navigate('/compose');
+      window.location.href = "/compose";
       alert("Login success");
     }
     else {

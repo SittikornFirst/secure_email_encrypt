@@ -10,7 +10,7 @@ export default function AdminView() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen p-6">
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow p-6">
         <h2 className="text-xl font-bold mb-4">📋 Admin: Message Log</h2>
         <div className="space-y-4">
