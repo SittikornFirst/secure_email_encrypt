@@ -26,7 +26,7 @@ export default function Compose() {
     fetch(`http://localhost:5000/users?email=${sender}`)
       .then((res) => res.json())
       .then((data) => setUsers(data));
-  }, []);
+  }, [sender]);
 
   const sendTo = async () => {
     if (!users.includes(receiver)) {
@@ -44,7 +44,6 @@ export default function Compose() {
     else alert("❌ Failed to send");
   };
 
-
   const loadInbox = () => {
     if (!showInbox) {
       const email = localStorage.getItem("email") || "";
@@ -59,8 +58,6 @@ export default function Compose() {
     }
   };
 
-
-
   return (
     <div className="min-h-screen p-6 ">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -70,16 +67,18 @@ export default function Compose() {
             Select Receiver
           </h3>
           <ul className="space-y-2">
-            {users.map((email) => (
-              <li key={email}>
-                <button
-                  onClick={() => setReceiver(email)}
-                  className="w-full text-left px-3 py-2 bg-gray-100 hover:bg-blue-100 rounded-lg transition"
-                >
-                  {email}
-                </button>
-              </li>
-            ))}
+            {users.map((email) =>
+              email.role !== "admin" ? (
+                <li key={email}>
+                  <button
+                    onClick={() => setReceiver(email)}
+                    className="w-full text-left px-3 py-2 bg-gray-100 hover:bg-blue-100 rounded-lg transition"
+                  >
+                    {email}
+                  </button>
+                </li>
+              ) : null
+            )}
           </ul>
         </div>
 
@@ -126,10 +125,11 @@ export default function Compose() {
             </button>
             <button
               onClick={loadInbox}
-              className={`${showInbox
-                ? "bg-gray-500 hover:bg-gray-600"
-                : "bg-green-600 hover:bg-green-700"
-                } text-white px-6 py-2 rounded-lg`}
+              className={`${
+                showInbox
+                  ? "bg-gray-500 hover:bg-gray-600"
+                  : "bg-green-600 hover:bg-green-700"
+              } text-white px-6 py-2 rounded-lg`}
             >
               {showInbox ? "Hide Messages" : "View Messages"}
             </button>
@@ -141,7 +141,6 @@ export default function Compose() {
               <h3 className="text-xl font-semibold mb-4">📥 Inbox</h3>
 
               {emails.length > 0 ? (
-
                 <div className="space-y-4">
                   <input
                     placeholder="Enter decryption key"
@@ -150,7 +149,10 @@ export default function Compose() {
                     className="mb-4 px-4 py-2 border border-gray-300 rounded-lg w-full"
                   />
                   {emails.map((email, idx) => (
-                    <div key={idx} className="bg-gray-100 p-4 rounded-lg border">
+                    <div
+                      key={idx}
+                      className="bg-gray-100 p-4 rounded-lg border"
+                    >
                       <p className="text-sm text-gray-700">
                         <strong>From:</strong> {email.sender}
                       </p>
@@ -167,7 +169,9 @@ export default function Compose() {
                       {decryptedMessages[email.message] && (
                         <div className="mt-2 p-2 bg-green-50 border border-green-300 rounded">
                           <strong className="text-green-800">Decrypted:</strong>
-                          <p className="text-gray-800">{decryptedMessages[email.message]}</p>
+                          <p className="text-gray-800">
+                            {decryptedMessages[email.message]}
+                          </p>
                         </div>
                       )}
                     </div>

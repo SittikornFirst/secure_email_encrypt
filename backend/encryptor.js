@@ -1,4 +1,4 @@
-const crypto = require('crypto')
+const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 
 const encrypt = (text, key) => {

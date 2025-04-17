@@ -19,6 +19,7 @@ export default function AdminView() {
     <div className="min-h-screen p-6 space-y-8">
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow p-6">
         <h2 className="text-xl font-bold mb-4">👤 Registered Users</h2>
+        <h2 className="text-xl font-bold mb-4">Total Users: {users.length}</h2>
         <table className="w-full text-sm table-auto border border-collapse border-gray-300">
           <thead className="bg-gray-100">
             <tr>
@@ -27,6 +28,7 @@ export default function AdminView() {
               <th className="border px-4 py-2 text-left">Role</th>
             </tr>
           </thead>
+
           <tbody>
             {users.map((u, idx) => (
               <tr key={idx}>
