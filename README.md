@@ -35,7 +35,7 @@ node index.js
 ### 2. Frontend Setup
 
 ```bash
-cd secure-email
+cd frontend
 npm install
 npm run dev
 ```
