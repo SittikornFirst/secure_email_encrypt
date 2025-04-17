@@ -1,7 +1,4 @@
 # Secure Email System with Confidentiality
-
-A simple full-stack web application that simulates an **email system with confidentiality** using encryption. Users must **register and log in**, then can **send encrypted messages** to other registered users and **decrypt messages using a shared key**.
-
 ---
 
 ## Features
